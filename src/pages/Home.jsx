@@ -1,85 +1,109 @@
 // src/pages/Home.jsx
-import React, { useEffect, useMemo, useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import React from "react";
+import { CheckCircle2, Settings, Zap, Flame, RefreshCcw, ChevronRight, Calendar, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
-import { plan } from "../data/plan.jsx";
-import { Button, Card, CardContent, CardHeader, CardTitle, ProgressBar } from "../components/ui.jsx";
+import { useUser } from "../context/UserContext.jsx";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "../components/ui.jsx";
 
-const STORAGE_KEY = "fatloss_6day_progress_v1";
+const ICONS = {
+  Zap: <Zap className="h-5 w-5" />,
+  Flame: <Flame className="h-5 w-5" />,
+  RefreshCcw: <RefreshCcw className="h-5 w-5" />,
+  Activity: <Activity className="h-5 w-5" />
+};
 
-const DaySummaryCard = ({ d, to }) => (
-  <Card className="h-full flex flex-col">
-    <CardHeader>
-      <div className="flex items-center gap-3">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${d.color}`}>{d.icon}</div>
-        <div>
-          <CardTitle>{d.day}</CardTitle>
-          <p className="text-[13px] text-gray-600">{d.type}</p>
+const FeaturedCard = ({ d, to }) => (
+  <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl shadow-slate-300/40 dark:shadow-none mb-8 active:scale-[0.99] transition-transform duration-300">
+    <div className={`absolute top-0 right-0 p-32 md:p-40 rounded-full blur-3xl opacity-30 ${d.color.replace('ring-', 'bg-')}`}></div>
+    <div className="relative p-6 sm:p-8 flex flex-col h-auto">
+      <div className="flex items-center justify-between mb-6">
+        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold uppercase tracking-wider border border-white/10">
+          {d.systemFocus || "Balanced"}
+        </span>
+        <div className={`p-2 rounded-xl bg-white/10 ${d.color.replace('ring-', 'text-')}`}>
+          {ICONS[d.iconName]}
         </div>
       </div>
-    </CardHeader>
-    <CardContent className="flex flex-col flex-1">
-      <p className="text-sm text-gray-700 line-clamp-3">{d.summary}</p>
-      <ul className="mt-3 text-xs text-gray-600 list-disc list-inside space-y-1">
-        {d.blocks.filter(b => b.ex).slice(0,3).map((b, idx) => <li key={idx}>{b.ex.name}</li>)}
-      </ul>
-      <div className="mt-auto pt-4">
-        <Button as={Link} to={to} className="w-full">View plan</Button>
+
+      <h3 className="text-3xl font-black tracking-tight mb-2">{d.day}</h3>
+      <p className="text-slate-300 font-medium text-sm mb-6 max-w-xs">{d.type}</p>
+
+      <div className="flex flex-wrap gap-2 mb-8">
+        {d.rawBlocks.slice(0, 4).map((b, i) => (
+          <span key={i} className="px-2.5 py-1 rounded-md bg-white/10 border border-white/5 text-[10px] uppercase font-bold text-slate-200">
+            {b.name}
+          </span>
+        ))}
       </div>
-    </CardContent>
-  </Card>
+
+      <Button as={Link} to={to} className="w-full bg-white !text-slate-900 hover:bg-slate-50 border-none font-black h-12 text-base shadow-lg shadow-black/20">
+        Start Session <ChevronRight className="ml-2 h-4 w-4" />
+      </Button>
+    </div>
+  </div>
+);
+
+const CompactDayRow = ({ d, to }) => (
+  <Link to={to} className="flex items-center p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 active:bg-slate-50 dark:active:bg-slate-800/50 transition-colors group">
+    <div className={`flex items-center justify-center h-12 w-12 rounded-2xl ${d.color.replace('ring-', 'bg-')} ${d.color.replace('ring-', 'text-')} bg-opacity-10 dark:bg-opacity-20 mr-4 shadow-sm`}>
+      {ICONS[d.iconName]}
+    </div>
+    <div className="flex-1 min-w-0">
+      <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate">{d.day}</h4>
+      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate flex gap-2">
+        <span>{d.type}</span>
+        {d.systemFocus && <span className="font-bold text-slate-400">• {d.systemFocus}</span>}
+      </p>
+    </div>
+    <div className="flex items-center text-slate-300 dark:text-slate-600 group-hover:text-slate-400 dark:group-hover:text-slate-500 transition-colors">
+      <ChevronRight className="h-5 w-5" />
+    </div>
+  </Link>
 );
 
 export default function Home() {
-  const weeklyTotalSets = useMemo(
-    () => plan.reduce((t, d) => t + d.blocks.filter(b => b.ex && b.sets).reduce((a, b) => a + Number(b.sets || 0), 0), 0),
-    []
-  );
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const obj = JSON.parse(raw || "{}");
-      const done = Object.values(obj).reduce((a, v) => a + (v?.done || 0), 0);
-      setProgress(Math.min(100, Math.round((done / weeklyTotalSets) * 100)));
-    } catch {}
-  });
+  const { currentPlan, resetInputs, inputs } = useUser();
+
+  if (!inputs || currentPlan.length === 0) return null;
+
+  // Separate the first day as "Featured" and the rest as "Upcoming"
+  const [featuredDay, ...upcomingDays] = currentPlan;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-[#f7f7fb] to-[#eef7ff]">
-      <header className="mx-auto max-w-7xl px-5 pt-8 md:px-8">
-        <div className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-white/70 p-6 backdrop-blur md:flex-row md:items-center">
-          <div>
-            <h1 className="text-2xl font-black tracking-tight">6-Day Fat-Loss Plan · No Equipment</h1>
-            <p className="mt-1 text-sm text-gray-600">Pick a day to open the full plan.</p>
-          </div>
-          <div className="w-full max-w-xs md:w-72">
-            <p className="mb-1 text-xs font-medium text-gray-600">Weekly completion</p>
-            <ProgressBar value={progress} />
-            <p className="mt-1 text-right text-xs text-gray-500">{progress}%</p>
-          </div>
+    <div className="pb-12 pt-2">
+      {/* Dashboard Header */}
+      <header className="flex items-center justify-between mb-6 px-1">
+        <div>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
         </div>
+        <button
+          onClick={resetInputs}
+          className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-blue-600 dark:hover:text-slate-200 transition-colors"
+        >
+          <Settings className="h-5 w-5" />
+        </button>
       </header>
 
-      <main className="mx-auto max-w-7xl px-5 py-8 md:px-8">
-        {/* No horizontal scroll. Always show all 6 cards. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <DaySummaryCard d={plan[0]} to="/day/monday" />
-          <DaySummaryCard d={plan[1]} to="/day/tuesday" />
-          <DaySummaryCard d={plan[2]} to="/day/wednesday" />
-          <DaySummaryCard d={plan[3]} to="/day/thursday" />
-          <DaySummaryCard d={plan[4]} to="/day/friday" />
-          <DaySummaryCard d={plan[5]} to="/day/saturday" />
+      {/* Featured "Up Next" Workout */}
+      <div className="animate-slideUpFade">
+        <FeaturedCard d={featuredDay} to={`/day/${featuredDay.day.replace(" ", "").toLowerCase()}`} />
+      </div>
+
+      {/* Upcoming List */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Upcoming Sessions</h3>
+          <span className="text-xs font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{upcomingDays.length}</span>
         </div>
 
-        <div className="mt-8 text-center text-xs text-gray-500">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/70 ring-1 ring-gray-200">
-            <CheckCircle2 className="h-4 w-4" />
-            Fully responsive · No scrolling on home · Click any card to view details
-          </div>
+        <div className="flex flex-col gap-3">
+          {upcomingDays.map((d) => (
+            <CompactDayRow key={d.day} d={d} to={`/day/${d.day.replace(" ", "").toLowerCase()}`} />
+          ))}
         </div>
-      </main>
+      </div>
+
     </div>
   );
 }

@@ -7,8 +7,8 @@ export const Badge = ({ children, className = "" }) => (
   </span>
 );
 
-export const Card = ({ children, className = "" }) => (
-  <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}>{children}</div>
+export const Card = ({ children, className = "", ...props }) => (
+  <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm dark:bg-slate-900 dark:border-slate-800 transition-colors ${className}`} {...props}>{children}</div>
 );
 
 export const CardHeader = ({ children, className = "" }) => (
@@ -36,11 +36,11 @@ export const Button = ({
   const base =
     "inline-flex items-center justify-center text-center gap-2 rounded-xl px-3.5 py-2 text-sm font-semibold transition active:scale-[.98]";
   const styles = {
-    default: "bg-black text-white hover:bg-gray-800",
-    outline: "border border-gray-300 hover:border-gray-400",
-    soft: "bg-gray-100 hover:bg-gray-200",
-    green: "bg-emerald-600 text-white hover:bg-emerald-700",
-    red: "bg-rose-600 text-white hover:bg-rose-700",
+    default: "bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-slate-200",
+    outline: "border border-gray-300 hover:border-gray-400 dark:border-slate-700 dark:hover:border-slate-600 dark:text-slate-300",
+    soft: "bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700",
+    green: "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500",
+    red: "bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-500",
   };
   const cls = `${base} ${styles[variant]} ${className}`;
   return (
