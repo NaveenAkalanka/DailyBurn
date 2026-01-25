@@ -1,7 +1,9 @@
 import React from "react";
-import { ChevronLeft, Menu, ArrowRightLeft, Dumbbell, PlayCircle } from "lucide-react";
+import { ChevronLeft, Menu, ArrowRightLeft, Dumbbell, PlayCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui.jsx";
+import { EXERCISE_LIBRARY } from "../../data/exercises";
+import { useUser } from "../../context/UserContext.jsx";
 
 // Helper for short rep strings based on system/category
 const getShortPrescription = (blockSystem, exCategory, meta) => {
@@ -11,7 +13,28 @@ const getShortPrescription = (blockSystem, exCategory, meta) => {
 };
 
 export const ExerciseRow = ({ ex, system, meta }) => {
-  const shortRep = getShortPrescription(system, ex.category, meta);
+  // 1. Get Timing Data (Plan or Fallback)
+  const timing = ex.timing || EXERCISE_LIBRARY.find(e => e.name === ex.name)?.timing || { seconds_per_rep: 3 };
+
+  // 2. Calculate Duration
+  let durationLabel = "";
+  if (ex.target && ex.target.toLowerCase().includes("sec")) {
+    durationLabel = ex.target; // Already time based
+  } else {
+    // Extract reps
+    const reps = parseInt(String(ex.target).replace(/[^0-9]/g, '')) || 10;
+    const totalSeconds = Math.ceil(reps * timing.seconds_per_rep);
+
+    // Format nicely (e.g. 90s vs 1m 30s? Let's stick to seconds for now or simple min parsing if large)
+    if (totalSeconds > 60) {
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+      durationLabel = `${m}m ${s}s`;
+    } else {
+      durationLabel = `${totalSeconds}s`;
+    }
+  }
+
   const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " exercise tutorial")}`;
 
   return (
@@ -26,11 +49,18 @@ export const ExerciseRow = ({ ex, system, meta }) => {
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
-          {ex.name}
-        </h4>
+        <div className="flex items-center gap-2">
+          <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
+            {ex.name}
+          </h4>
+          {/* Duration Badge */}
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/30 text-[10px] font-bold text-blue-600 dark:text-blue-400">
+            <Clock className="w-3 h-3" />
+            {durationLabel}
+          </span>
+        </div>
         <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-          {shortRep}
+          {ex.target || "10-12 reps"}
         </p>
       </div>
 
@@ -49,6 +79,19 @@ export const ExerciseRow = ({ ex, system, meta }) => {
 
 export const DayDetailCard = ({ d }) => {
   const navigate = useNavigate();
+  // const { regenerateDay } = useUser(); // Removed as per instruction
+  // const [isRegenerating, setIsRegenerating] = React.useState(false); // Removed as per instruction
+
+  // const handleEdit = () => { // Removed as per instruction
+  //   // For V1, "Edit" simply means "Shuffle/Regenerate" to get new moves
+  //   // Future: Allow drag-and-drop or specific swap
+  //   if (window.confirm("Shuffle this workout?\nThis will generate a new set of exercises for today.")) {
+  //     setIsRegenerating(true);
+  //     regenerateDay(d.day);
+  //     // Small delay to show feedback, though React state update will trigger re-render
+  //     setTimeout(() => setIsRegenerating(false), 500);
+  //   }
+  // }; // Removed as per instruction
 
   // Calculate total exercises
   const totalExercises = d.rawBlocks.reduce((acc, block) => {
@@ -85,7 +128,7 @@ export const DayDetailCard = ({ d }) => {
       <div className="flex-1 px-4 space-y-8 pb-32">
         <div className="flex items-center justify-between px-2 mb-2">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Exercises</h2>
-          <button className="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+          {/* Removed Edit button */}
         </div>
 
         <div className="space-y-6">
@@ -135,7 +178,7 @@ export const DayDetailCard = ({ d }) => {
       </div>
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-8 left-0 right-0 px-6 z-30">
+      <div className="fixed bottom-28 left-0 right-0 px-6 z-40">
         <Button
           onClick={() => navigate('/live-session', { state: { day: d } })}
           className="w-full h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 rounded-full text-lg font-bold shadow-xl shadow-slate-900/20"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Check, CalendarDays, Timer, XCircle, ChevronRight, ChevronLeft, Zap, Activity, Flame, LayoutTemplate } from "lucide-react";
+import { Check, CalendarDays, Timer, XCircle, ChevronRight, ChevronLeft, Zap, Activity, Flame, LayoutTemplate, Dumbbell } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { predictSchedule } from "../logic/scienceAlgorithm";
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge } from "./ui";
@@ -113,6 +113,12 @@ const SLIDES = [
         content: null
     },
     {
+        id: "mode_explanation",
+        title: "Your Training Mode",
+        icon: <Zap className="w-8 h-8 text-indigo-600 mx-auto mb-2" />,
+        content: null
+    },
+    {
         id: "config_limits",
         title: "Limitations",
         icon: <XCircle className="w-8 h-8 text-amber-600 mx-auto mb-2" />,
@@ -142,7 +148,13 @@ const SLIDES = [
 
 export default function Onboarding() {
     const { updateInputs } = useUser();
-    const [currentSlide, setCurrentSlide] = useState(0);
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    // PERSISTENCE: Initialize from storage or default to 0
+    const [currentSlide, setCurrentSlide] = useState(() => {
+        const saved = localStorage.getItem('dailyburn_onboarding_slide');
+        return saved ? parseInt(saved, 10) : 0;
+    });
 
     // Form State
     const [fitnessLevel, setFitnessLevel] = useState("Intermediate"); // Default
@@ -152,8 +164,9 @@ export default function Onboarding() {
     const [planMethod, setPlanMethod] = useState(null); // 'auto' | 'custom'
     const [showAdvisor, setShowAdvisor] = useState(false);
 
-    // Debugging Effect
+    // Persistence Effect
     useEffect(() => {
+        localStorage.setItem('dailyburn_onboarding_slide', currentSlide.toString());
         console.log("Onboarding Slide Updated:", currentSlide, SLIDES[currentSlide]?.id);
     }, [currentSlide]);
 
@@ -176,7 +189,15 @@ export default function Onboarding() {
 
     const handleGenerate = () => {
         if (selectedDays.length === 0) return;
-        updateInputs({ selectedDays, time, exclusions, fitnessLevel });
+
+        setIsGenerating(true);
+
+        // Add significant delay to allow the "Building Plan..." UI to show
+        // and completely prevent any ghost clicks or immediate interactions
+        setTimeout(() => {
+            localStorage.removeItem('dailyburn_onboarding_slide'); // Clear persistence
+            updateInputs({ selectedDays, time, exclusions, fitnessLevel });
+        }, 800);
     };
 
     // Smart Advisor Logic
@@ -232,6 +253,9 @@ export default function Onboarding() {
     };
 
     const quickStart = () => {
+        // Skip setup usually implies skipping to the end or defaults?
+        // Actually the original code just jumped to method_selection.
+        // We should probably NOT clear storage here if it's just jumping to slide 4.
         const idx = SLIDES.findIndex(s => s.id === "method_selection");
         setCurrentSlide(idx);
     };
@@ -413,6 +437,43 @@ export default function Onboarding() {
                         </div>
                     )}
 
+                    {/* Step 2.5: Mode Explanation */}
+                    {slide.id === "mode_explanation" && (
+                        <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300 text-center">
+                            {time <= 30 ? (
+                                <>
+                                    <div className="p-4 bg-orange-100 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
+                                        <Zap className="h-10 w-10 text-orange-600" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-slate-900">Circuit Mode</h3>
+                                        <p className="text-slate-500 font-medium mt-1">Short Duration • High Intensity</p>
+                                    </div>
+                                    <div className="bg-orange-50 p-4 rounded-xl text-sm text-left border border-orange-100 space-y-2">
+                                        <p>⚡ <strong>Fast Paced:</strong> Minimal rest between exercises to keep your heart rate up.</p>
+                                        <p>🔄 <strong>4 Rounds:</strong> High volume in a short time window.</p>
+                                        <p>🔥 <strong>Goal:</strong> Maximum calorie burn and conditioning.</p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="p-4 bg-indigo-100 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
+                                        <Dumbbell className="h-10 w-10 text-indigo-600" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-slate-900">Superset Mode</h3>
+                                        <p className="text-slate-500 font-medium mt-1">Standard Duration • Strength Focus</p>
+                                    </div>
+                                    <div className="bg-indigo-50 p-4 rounded-xl text-sm text-left border border-indigo-100 space-y-2">
+                                        <p>💪 <strong>Strength First:</strong> Longer rest periods to maximize lift quality.</p>
+                                        <p>🔄 <strong>3 Rounds:</strong> Focused volume for hypertrophy.</p>
+                                        <p>📈 <strong>Goal:</strong> Build muscle and increase raw strength.</p>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+
                     {/* Step 3: Limits */}
                     {slide.id === "config_limits" && (
                         <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
@@ -543,13 +604,24 @@ export default function Onboarding() {
                         ))}
                     </div>
 
-                    {/* Temporary Debug Footer */}
-                    <div className="mt-4 p-2 bg-slate-100 rounded text-[10px] text-slate-400 font-mono text-center">
-                        DEBUG: ID={slide.id} | IDX={currentSlide} | Limit={exclusions.length}
-                    </div>
+
 
                 </CardContent>
             </Card>
+            {/* Loading Overlay */}
+            {isGenerating && (
+                <div className="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+                    <div className="p-4 rounded-full bg-blue-500/20 mb-6 animate-pulse">
+                        <Activity className="w-12 h-12 text-blue-400" />
+                    </div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-2">
+                        Building Your Plan...
+                    </h2>
+                    <p className="text-slate-400 text-center max-w-xs">
+                        Optimizing your schedule based on your preferences
+                    </p>
+                </div>
+            )}
         </div >
     );
 }

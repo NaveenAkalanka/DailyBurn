@@ -10,6 +10,7 @@ import { EXERCISE_LIBRARY } from "../data/exercises.js";
 // ==========================================
 
 // Filter exercises based on constraints (The Safety Funnel)
+// Filter exercises based on constraints (The Safety Funnel)
 const filterExercises = (db, level, userEquipment, constraints) => {
     return db.filter(ex => {
         // 1. Equipment Check (Positive Logic)
@@ -25,18 +26,26 @@ const filterExercises = (db, level, userEquipment, constraints) => {
         if (constraints.includes("no_bar") && reqs.includes("Pull-up Bar")) return false;
         if (constraints.includes("no_wall") && reqs.includes("Wall")) return false;
 
-        // 3. Level Check (Skill Ceiling)
-        if (level === "Beginner" && ex.progression_index > 30) return false;
+        // 3. Level Check (Strict Tiering)
+        // Beginner: Beginner only
+        // Intermediate: Beginner + Intermediate
+        // Advanced: Beginner + Intermediate + Advanced + Expert
+        if (level === "Beginner") {
+            if (ex.level !== "Beginner") return false;
+        } else if (level === "Intermediate") {
+            if (!["Beginner", "Intermediate"].includes(ex.level)) return false;
+        } else {
+            // Advanced/Elite - Access to everything
+            // Note: We might want to filter OUT Beginner moves for Elite users to keep it hard,
+            // but for now, variety is good. The sorting logic handles difficulty.
+        }
 
         // 4. Injury/Safety Check
         if (constraints.includes("cant_pushups") && ex.pattern === "Push" && ex.sub_pattern !== "Vertical") return false;
         if (constraints.includes("wrist_pain") && ex.pattern === "Push") {
             // Whitelist safe moves: Wall Push-up
             if (ex.name === "Wall Push-up") return true;
-            // Vertical is unsafe for wrists if it's Pike Push-up (lots of weight on wrists).
-            // Vertical Pulls are fine, but this is Push pattern.
-            // If it's Vertical Push (Handstand/Pike), it's generally WRIST HEAVY.
-            // So we exclude ALL Push unless it's Wall Push-up.
+            // Block all other Push moves if wrist pain is present (Vertical & Horizontal)
             return false;
         }
         if (constraints.includes("cant_run") && ex.pattern === "Cardio" && ex.sub_pattern === "Impact") return false;
@@ -63,15 +72,34 @@ const calculateReps = (timeAvailableSec, exTiming) => {
 };
 
 // Boss Battle Logic
-const getBossBattle = (currentEx, candidatePool) => {
-    // Find next hardest move in same pattern
-    const candidates = candidatePool.filter(e =>
+const getBossBattle = (currentEx, candidatePool, userLevel) => {
+    // Determine Target Level (Level + 1)
+    let targetLevels = ["Intermediate"]; // Default for Beginner
+
+    if (userLevel === "Intermediate") {
+        targetLevels = ["Advanced"];
+    } else if (userLevel === "Advanced") {
+        targetLevels = ["Expert", "Advanced"]; // Prioritize Expert, fallback to Advanced
+    }
+
+    // Find candidates in the target level(s) for the same pattern
+    let candidates = candidatePool.filter(e =>
         e.pattern === currentEx.pattern &&
-        e.progression_index > currentEx.progression_index
+        targetLevels.includes(e.level)
     );
+
+    // [Fallback] If no "Next Level" move exists (e.g. equipment constraint), 
+    // just find something harder in current level
+    if (candidates.length === 0) {
+        candidates = candidatePool.filter(e =>
+            e.pattern === currentEx.pattern &&
+            e.progression_index > currentEx.progression_index
+        );
+    }
 
     if (candidates.length > 0) {
         // Sort by difficulty ascending (next step up)
+        // We want the "next step", not the "impossible step"
         candidates.sort((a, b) => a.progression_index - b.progression_index);
         return candidates[0];
     }
@@ -153,7 +181,7 @@ export function generateSciencePlan({ selectedDays, time, exclusions, fitnessLev
     // However, if a user is "Beginner", we shouldn't give them "Muscle-ups".
     // So let's respect the fitnessLevel for Bosses too, or maybe allow +1 level cap?
     // Let's keep it strict for now: Bosses must also match fitnessLevel (or be Advanced if user is Advanced).
-    const bossDb = filterExercises(EXERCISE_LIBRARY, fitnessLevel === "Advanced" ? "Advanced" : fitnessLevel, equipment, exclusions);
+    const bossDb = filterExercises(EXERCISE_LIBRARY, "Expert", equipment, exclusions);
 
     // Structure Definition
     const slots = ["Legs", "Push", "Pull", "Core"];
@@ -241,7 +269,7 @@ export function generateSciencePlan({ selectedDays, time, exclusions, fitnessLev
                 // BOSS BATTLE (Last Round, Push Slot - usually index 1)
                 let isBoss = false;
                 if (r === totalRounds - 1 && slots[laneIdx] === "Push") {
-                    const bossMove = getBossBattle(exData, bossDb);
+                    const bossMove = getBossBattle(exData, bossDb, fitnessLevel);
                     if (bossMove) {
                         exData = bossMove;
                         targetVal = "MAX";
@@ -255,7 +283,8 @@ export function generateSciencePlan({ selectedDays, time, exclusions, fitnessLev
                     category: exData.category, // for UI compat
                     movementPattern: exData.pattern,
                     target: `${targetVal} ${targetUnit}`, // "12 reps"
-                    is_challenge: isBoss
+                    is_challenge: isBoss,
+                    timing: exData.timing // [NEW] Pass timing data for frontend logic
                 });
             });
 
