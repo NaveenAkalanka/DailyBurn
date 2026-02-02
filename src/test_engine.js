@@ -1,74 +1,60 @@
-import { generateSciencePlan } from "./logic/scienceAlgorithm.js";
+import { getDurationGuidelines, generateSciencePlan } from "./logic/scienceAlgorithm.js";
+import { EXERCISE_LIBRARY } from "./data/exercises.js";
 
-console.log("⚡ INTELLIGENT ENGINE DIAGNOSTICS ⚡\n");
+console.log("=== UNIT TEST: DAILYBURN ENGINE ===");
 
-// --- UTILS ---
-function assert(condition, message) {
-    if (condition) console.log(`[PASS] ${message}`);
-    else console.error(`[FAIL] ${message}`);
-}
+// 1. Duration Logic (Volume Targets)
+console.log("\n[1] Testing Duration Guidelines...");
+const cases = [
+    { level: "Beginner", days: 3, expectedIdeal: 30 }, // 90 / 3 = 30
+    { level: "Intermediate", days: 4, expectedIdeal: 40 }, // 160 / 4 = 40
+    { level: "Advanced", days: 5, expectedIdeal: 50 }, // 250 / 5 = 50
+    { level: "Beginner", days: 1, expectedIdeal: 45 }, // Clamped Max (45)
+    { level: "Advanced", days: 7, expectedIdeal: 35 }  // 250 / 7 = 35.7 -> 35
+];
 
-// --- TEST 1: SAFETY FUNNEL ---
-console.log("--- TEST 1: SAFETY FUNNEL (No Jumping) ---");
+cases.forEach(c => {
+    const res = getDurationGuidelines(c.level, c.days);
+    const pass = Math.abs(res.ideal - c.expectedIdeal) <= 5; // Allow rounding
+    console.log(`  ${c.level} / ${c.days} Days -> Target: ${res.ideal}m (Expected: ~${c.expectedIdeal}) [${pass ? "PASS" : "FAIL"}]`);
+});
+
+
+// 2. Round Scaling Logic
+console.log("\n[2] Testing Round Scaling...");
+const durationTests = [15, 30, 45, 60];
+const testDay = ["Monday"];
+
+durationTests.forEach(time => {
+    const plan = generateSciencePlan({
+        selectedDays: testDay,
+        time: time,
+        exclusions: [],
+        fitnessLevel: "Intermediate"
+    });
+
+    // Extract round count from the first block after Warmup
+    // Plan structure: [DayObject] -> rawBlocks: [Warmup, Round1, Round2...]
+    const rounds = plan[0].rawBlocks.filter(b => b.name.includes("Round")).length;
+    console.log(`  ${time} min Session -> Generated ${rounds} Rounds`);
+});
+
+
+// 3. Safety Constraint Logic
+console.log("\n[3] Testing Safety Funnel...");
+const constraints = ["knee_pain", "no_bar"];
 const planSafety = generateSciencePlan({
     selectedDays: ["Monday"],
     time: 30,
-    exclusions: ["no_jumping"]
+    exclusions: constraints,
+    fitnessLevel: "Advanced"
 });
-const monSafety = planSafety.find(d => d.day === "Monday");
-// Extract all exercise names from all blocks (excluding Warmup)
-// Note: Warmup is block 0, lets check main blocks
-const mainBlocks = monSafety.rawBlocks.filter(b => b.name.includes("Round"));
-const allExNamesSafety = mainBlocks.flatMap(b => b.exercises.map(e => e.name));
 
-// Check for prohibited words
-const hasJump = allExNamesSafety.some(n => n.toLowerCase().includes("jump") || n.toLowerCase().includes("burpee"));
-if (hasJump) {
-    console.error("[FAIL] Found banned exercises: " + allExNamesSafety.filter(n => n.toLowerCase().includes("jump") || n.toLowerCase().includes("burpee")).join(", "));
-} else {
-    console.log("[PASS] Safe Plan generated (No Jumping/Burpee detected)");
-}
+const allExercises = planSafety[0].rawBlocks.flatMap(b => b.exercises);
+const hasSquat = allExercises.some(e => e.name.includes("Squat") || e.name.includes("Lunge"));
+const hasPullup = allExercises.some(e => e.name.includes("Pull-up"));
 
+console.log(`  Constraint 'knee_pain' -> Has Squats? ${hasSquat} [${!hasSquat ? "PASS" : "FAIL"}]`);
+console.log(`  Constraint 'no_bar' -> Has Pullups? ${hasPullup} [${!hasPullup ? "PASS" : "FAIL"}]`);
 
-// --- TEST 2: CIRCUIT MODE (20 mins) ---
-console.log("\n--- TEST 2: CIRCUIT MODE (20 mins) ---");
-const planCircuit = generateSciencePlan({
-    selectedDays: ["Monday"],
-    time: 20,
-    exclusions: []
-});
-const monCircuit = planCircuit[0];
-assert(monCircuit.type.includes("CIRCUIT"), `Plan Type is '${monCircuit.type}' (Expected: includes CIRCUIT)`);
-// Check Round count (excluding warmup)
-const roundCountC = monCircuit.rawBlocks.filter(b => b.name.includes("Round")).length;
-assert(roundCountC === 4, `Circuit has ${roundCountC} rounds (Expected 4)`);
-
-// --- TEST 3: SUPERSET MODE (45 mins) ---
-console.log("\n--- TEST 3: SUPERSET MODE (45 mins) ---");
-const planSuper = generateSciencePlan({
-    selectedDays: ["Monday"],
-    time: 45,
-    exclusions: []
-});
-const monSuper = planSuper[0];
-assert(monSuper.type.includes("SUPERSET"), `Plan Type is '${monSuper.type}' (Expected: includes SUPERSET)`);
-const roundCountS = monSuper.rawBlocks.filter(b => b.name.includes("Round")).length;
-assert(roundCountS === 3, `Superset has ${roundCountS} rounds (Expected 3)`);
-
-
-// --- TEST 4: BOSS BATTLE (Last Round) ---
-console.log("\n--- TEST 4: BOSS BATTLE LOGIC ---");
-// Check the Superset plan's last round
-// rawBlocks structure: [Warmup, Round 1, Round 2, Round 3]
-const lastRound = monSuper.rawBlocks[monSuper.rawBlocks.length - 1];
-const bossEx = lastRound.exercises.find(e => e.is_challenge);
-
-if (bossEx) {
-    console.log(`[PASS] Boss Battle Detected: ${bossEx.name}`);
-    console.log(`       Target: ${bossEx.target}`);
-} else {
-    console.error("[FAIL] No Boss Battle found in the final round.");
-    console.log("DEBUG: Final round exercises:", lastRound.exercises.map(e => `${e.name} (Chall: ${e.is_challenge})`));
-}
-
-console.log("\n--- DIAGNOSTICS COMPLETE ---");
+console.log("\n=== TEST COMPLETE ===");

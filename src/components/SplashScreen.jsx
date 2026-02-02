@@ -18,7 +18,7 @@ export default function SplashScreen({ onComplete }) {
                 {/* Logo Reveal - Bottom to Top */}
                 <div className="animate-slide-up-reveal mb-8 relative">
                     <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full opacity-50 animate-pulse"></div>
-                    <img src="/DailyBurn.svg" alt="DailyBurn Logo" className="h-48 w-48 object-contain relative z-10 drop-shadow-2xl" />
+                    <img src="/DailyBurn.svg" alt="DailyBurn Logo" className="h-48 w-48 object-contain relative z-10 drop-shadow-2xl dark:brightness-0 dark:invert" />
                 </div>
 
                 {/* Text Fade In - Staggered */}

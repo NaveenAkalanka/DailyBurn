@@ -126,8 +126,8 @@ const runAudit = () => {
                             selectedDays: [context], // Single day test
                             time: time,
                             exclusions: exclusions,
-                            skill: skill,       // NEW
-                            equipment: equipment // NEW
+                            fitnessLevel: skill,       // FIXED: Mapped correctly
+                            equipment: equipment
                         };
 
                         // 2. Generate

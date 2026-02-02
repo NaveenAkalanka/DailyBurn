@@ -7,6 +7,33 @@
 body {
   @apply font-sans antialiased text-gray-900 bg-slate-50 min-h-screen selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300;
   font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* Global "Nuclear" Reset for Clean UI */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+}
+
+a,
+button,
+input,
+textarea,
+select,
+svg,
+img {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Re-enable focus rings for keyboard users (accessibility) - customized */
+body:has(:focus-visible) a:focus-visible,
+body:has(:focus-visible) button:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  /* blue-500 */
+  outline-offset: 2px !important;
 }
 
 

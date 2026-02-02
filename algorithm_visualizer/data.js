@@ -1,4 +1,4 @@
-export const EXERCISE_LIBRARY = [
+const EXERCISE_LIBRARY = [
     // --- BEGINNER ---
     // Lower Body
     {
@@ -645,96 +645,5 @@ export const EXERCISE_LIBRARY = [
         category: "strength", pattern: "Push", sub_pattern: "Vertical", level: "Expert", progression_index: 100,
         requirements: ["Parallel Bars"], timing: { seconds_per_rep: 5.0, is_static: false },
         system_affinity: { phosphagen: 10, glycolytic: 3, oxidative: 1 }
-    },
-
-    // --- WARMUP / MOBILITY DATABASE ---
-    // Pulse (Heart Rate Raisers)
-    {
-        id: "wu_seal_jack", name: "Seal Jacks",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Full Body", level: "Beginner", progression_index: 1,
-        requirements: ["None"], timing: { seconds_per_rep: 1.0, is_static: false },
-        system_affinity: { phosphagen: 5, glycolytic: 8, oxidative: 8 }
-    },
-    {
-        id: "wu_boxer_shuffle", name: "Boxer Shuffle",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Full Body", level: "Beginner", progression_index: 1,
-        requirements: ["None"], timing: { seconds_per_rep: 0.8, is_static: false },
-        system_affinity: { phosphagen: 2, glycolytic: 6, oxidative: 10 }
-    },
-    {
-        id: "wu_march", name: "March in Place",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Full Body", level: "Beginner", progression_index: 0,
-        requirements: ["None"], timing: { seconds_per_rep: 1.5, is_static: false },
-        system_affinity: { phosphagen: 1, glycolytic: 3, oxidative: 8 }
-    },
-
-    // Upper Body Mobility
-    {
-        id: "wu_arm_circle", name: "Arm Circles",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Upper Body", level: "Beginner", progression_index: 0,
-        requirements: ["None"], timing: { seconds_per_rep: 2.0, is_static: false },
-        system_affinity: { phosphagen: 5, glycolytic: 5, oxidative: 5 }
-    },
-    {
-        id: "wu_shoulder_roll", name: "Shoulder Rolls",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Upper Body", level: "Beginner", progression_index: 0,
-        requirements: ["None"], timing: { seconds_per_rep: 2.0, is_static: false },
-        system_affinity: { phosphagen: 5, glycolytic: 5, oxidative: 5 }
-    },
-    {
-        id: "wu_cat_cow", name: "Cat-Cow Stretch",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Spine", level: "Beginner", progression_index: 1,
-        requirements: ["Floor"], timing: { seconds_per_rep: 4.0, is_static: false },
-        system_affinity: { phosphagen: 1, glycolytic: 3, oxidative: 5 }
-    },
-    {
-        id: "wu_chest_opener", name: "Dynamic Chest Openers",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Upper Body", level: "Beginner", progression_index: 1,
-        requirements: ["None"], timing: { seconds_per_rep: 2.5, is_static: false },
-        system_affinity: { phosphagen: 3, glycolytic: 4, oxidative: 5 }
-    },
-    {
-        id: "wu_wrist_circle", name: "Wrist Circles",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Joints", level: "Beginner", progression_index: 0,
-        requirements: ["None"], timing: { seconds_per_rep: 1.0, is_static: false },
-        system_affinity: { phosphagen: 1, glycolytic: 1, oxidative: 1 }
-    },
-
-    // Lower Body Mobility
-    {
-        id: "wu_leg_swing_fwd", name: "Forward Leg Swings",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Lower Body", level: "Beginner", progression_index: 1,
-        requirements: ["Support"], timing: { seconds_per_rep: 2.0, is_static: false },
-        system_affinity: { phosphagen: 5, glycolytic: 5, oxidative: 5 }
-    },
-    {
-        id: "wu_leg_swing_side", name: "Lateral Leg Swings",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Lower Body", level: "Beginner", progression_index: 1,
-        requirements: ["Support"], timing: { seconds_per_rep: 2.0, is_static: false },
-        system_affinity: { phosphagen: 5, glycolytic: 5, oxidative: 5 }
-    },
-    {
-        id: "wu_hip_circle", name: "Hip Circles",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Lower Body", level: "Beginner", progression_index: 0,
-        requirements: ["None"], timing: { seconds_per_rep: 3.0, is_static: false },
-        system_affinity: { phosphagen: 2, glycolytic: 3, oxidative: 5 }
-    },
-    {
-        id: "wu_deep_squat_hold", name: "Deep Squat Hold",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Lower Body", level: "Intermediate", progression_index: 2,
-        requirements: ["None"], timing: { seconds_per_rep: 1.0, is_static: true },
-        system_affinity: { phosphagen: 2, glycolytic: 4, oxidative: 4 }
-    },
-    {
-        id: "wu_world_stretch", name: "World's Greatest Stretch",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Full Body", level: "Intermediate", progression_index: 3,
-        requirements: ["Floor"], timing: { seconds_per_rep: 5.0, is_static: false },
-        system_affinity: { phosphagen: 3, glycolytic: 5, oxidative: 5 }
-    },
-    {
-        id: "wu_torso_twist", name: "Torso Twists",
-        category: "warmup", pattern: "Warmup", sub_pattern: "Spine", level: "Beginner", progression_index: 0,
-        requirements: ["None"], timing: { seconds_per_rep: 2.0, is_static: false },
-        system_affinity: { phosphagen: 5, glycolytic: 4, oxidative: 4 }
     }
 ];

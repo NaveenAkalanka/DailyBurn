@@ -165,6 +165,62 @@ export const predictSchedule = (selectedDays) => {
 };
 
 // ==========================================
+// 2b. DURATION GUIDELINES (User Guidance)
+// ==========================================
+export const getDurationGuidelines = (fitnessLevel, daysCount) => {
+    // 1. Define Weekly Volume Targets (Minutes)
+    // Beginner: ~90m (e.g. 3x30)
+    // Intermediate: ~160m (e.g. 4x40)
+    // Advanced: ~240m (e.g. 4x60 or 6x40)
+    let weeklyTarget = 160;
+    let absoluteMin = 20; // Hard floor per session
+    let absoluteMax = 60; // Hard ceiling per session
+
+    if (fitnessLevel === "Beginner") {
+        weeklyTarget = 90;
+        absoluteMin = 15;
+        absoluteMax = 45;
+    } else if (fitnessLevel === "Intermediate") {
+        weeklyTarget = 160;
+        absoluteMin = 25;
+        absoluteMax = 75;
+    } else if (fitnessLevel === "Advanced") {
+        weeklyTarget = 250;
+        absoluteMin = 35;
+        absoluteMax = 90;
+    }
+
+    // 2. Calculate Ideal Daily Duration
+    const days = Math.max(daysCount, 1);
+    let rawIdeal = Math.round(weeklyTarget / days);
+
+    // 3. Clamp Ideal within valid physiologic bounds
+    // Examples:
+    // Beginner 2 days -> 45m (Clamped to 45)
+    // Beginner 5 days -> 18m (Clamped to 15)
+    let ideal = Math.max(absoluteMin, Math.min(rawIdeal, absoluteMax));
+
+    // 4. Generate "Green Zone" Range (Recommended Window)
+    // We give a +/- buffer around the ideal
+    let min = Math.max(5, ideal - 10);
+    let max = ideal + 15;
+
+    // Advanced Constraints
+    if (fitnessLevel === "Advanced" && daysCount >= 5) {
+        max = Math.min(max, 80); // Cap high freq volume
+    }
+
+    // Round to nearest 5 for clean UI
+    ideal = Math.round(ideal / 5) * 5;
+    min = Math.round(min / 5) * 5;
+    max = Math.round(max / 5) * 5;
+
+    return { min, max, ideal };
+};
+
+
+
+// ==========================================
 // 3. MAIN GENERATOR
 // ==========================================
 // Main Generator
@@ -187,10 +243,22 @@ export function generateSciencePlan({ selectedDays, time, exclusions, fitnessLev
     const slots = ["Legs", "Push", "Pull", "Core"];
 
     // Mode Selection
-    // < 30m = Circuit (4 Rounds, fast)
-    // > 30m = Superset (3 Rounds, slower)
+    // < 30m = Circuit (Fast paced, minimal rest)
+    // > 30m = Superset (Strength focused, longer rest)
     const mode = time <= 30 ? "CIRCUIT" : "SUPERSET";
-    const totalRounds = mode === "CIRCUIT" ? 4 : 3;
+
+    // Dynamic Round Scaling (Science-based Volume Control)
+    // We cannot force 4 rounds into 15 minutes.
+    let totalRounds = 3; // Default
+
+    if (time <= 20) {
+        totalRounds = 2; // "Express" Micro-dose
+    } else if (time <= 35) {
+        totalRounds = 3; // Standard Efficient
+    } else {
+        totalRounds = 4; // High Volume
+        if (mode === "SUPERSET") totalRounds = 3; // Keep Supersets to 3 rounds to allow for longer rests/heavier loads
+    }
     const planArray = selectedDays.map((day, dIndex) => {
 
         // 1. Determine System for the Day (Periodization)
@@ -291,64 +359,106 @@ export function generateSciencePlan({ selectedDays, time, exclusions, fitnessLev
             dayStructure.push(roundObj);
         }
 
-        // Add Warmup Block at start
-        // Dynamic Warmup
-        // Dynamic Warmup
-        // Dynamic Warmup Pool
-        // Scientific Warmup Logic (System Matched)
-        // Phosphagen -> Explosive/Rotational
-        // Glycolytic -> High Intensity/Upper Body
-        // Oxidative -> Steady State/Lower Body
+        // ==========================================
+        // 4. DYNAMIC WARMUP GENERATOR
+        // ==========================================
+        const generateWarmupBlock = () => {
+            // A. Identify Focus Areas
+            // We look at the 'slots' used in this day.
+            // Slots are: ["Legs", "Push", "Pull", "Core"]
+            // In full body (default), all are present.
+            // But let's check what's actually in the selectedMatrix (in case of filtering).
+            const activePatterns = new Set();
+            selectedMatrix.forEach((lane, idx) => {
+                if (lane && lane.length > 0) activePatterns.add(slots[idx]);
+            });
 
-        const getWarmupForSystem = (sys, excl) => {
-            let cardio = "Jumping Jacks";
-            let mobility = "Arm Circles";
+            const needsUpper = activePatterns.has("Push") || activePatterns.has("Pull");
+            const needsLower = activePatterns.has("Legs");
 
-            if (sys === "phosphagen") {
-                cardio = "Seal Jacks"; // Explosive
-                mobility = "Torso Twists"; // Rotational Power
-            } else if (sys === "glycolytic") {
-                cardio = "High Knees"; // Metabolic
-                mobility = "Shoulder Rolls"; // Upper Body Pump
-            } else if (sys === "oxidative") {
-                cardio = "Boxer Shuffle"; // Steady
-                mobility = "Hip Circles"; // Lower Body flow
+            // B. Filter Warmup Database
+            // We want: 1 Pulse (Cardio/Full Body) + 1 Mobility (Matched to Focus)
+            const allWarmups = EXERCISE_LIBRARY.filter(e => e.pattern === "Warmup");
+            const safeWarmups = filterExercises(allWarmups, fitnessLevel, equipment, exclusions);
+
+            // C. Select Pulse (Cardio)
+            let pulsePool = safeWarmups.filter(e => e.sub_pattern === "Full Body");
+            if (pulsePool.length === 0) {
+                // Fallback if everything filtered out (e.g. no jumping, no floor)
+                // Use "March in Place" if available, or just ignore
+                const march = allWarmups.find(e => e.name === "March in Place");
+                if (march) pulsePool = [march];
+            }
+            const selectedPulse = shuffle(pulsePool)[0] || { name: "March in Place", category: "warmup" };
+
+            // D. Select Mobility
+            // Priority: Match the day's heaviest need.
+            // If Upper + Lower (Full Body) -> "Full Body" or "Spine" OR Pick one Upper/One Lower if time permits?
+            // Standard: 1 Pulse + 1 Mobility.
+            let mobilityPool = [];
+
+            if (needsUpper && needsLower) {
+                // Full Body Day -> Prefer Full Body/Spine moves, or mix
+                mobilityPool = safeWarmups.filter(e => ["Full Body", "Spine"].includes(e.sub_pattern));
+                // Fallback: Add everything if pool is empty
+                if (mobilityPool.length === 0) mobilityPool = safeWarmups;
+            } else if (needsUpper) {
+                mobilityPool = safeWarmups.filter(e => ["Upper Body", "Spine", "Joints"].includes(e.sub_pattern));
+            } else if (needsLower) {
+                mobilityPool = safeWarmups.filter(e => ["Lower Body", "Spine"].includes(e.sub_pattern));
             }
 
-            // SAFETY OVERRIDES (Crucial)
-            // If the "Scientific Choice" is unsafe, fallback to the safest options.
-            const unsafeJumps = ["no_jumping", "knee_pain"];
-            const unsafeRun = ["cant_run"];
-
-            // Cardio Safety Check
-            let isUnsafeCardio = false;
-            // specific checks per move
-            if (cardio === "Jumping Jacks" || cardio === "Seal Jacks" || cardio === "Boxer Shuffle") {
-                if (excl.some(e => unsafeJumps.includes(e))) isUnsafeCardio = true;
-            }
-            if (cardio === "High Knees") {
-                if (excl.some(e => [...unsafeJumps, ...unsafeRun].includes(e))) isUnsafeCardio = true;
+            if (mobilityPool.length === 0) {
+                // Fallback
+                mobilityPool = safeWarmups.filter(e => e.sub_pattern !== "Full Body"); // Any non-cardio
             }
 
-            if (isUnsafeCardio) {
-                cardio = "March in Place"; // The universal safe fallback
+            const selectedMobility = shuffle(mobilityPool)[0] || { name: "Arm Circles", category: "warmup" };
+
+            // Scaling Duration
+            // Standard: 5 mins total? 
+            // Logic: 2 exercises x 2 rounds? Or just 1 long set of each? 
+            // Let's stick to the current UI: 1 Cardio Block, 1 Mobility Block.
+            // Scaling based on total workout time.
+            // < 20m workout -> 2m warmup (60s each)
+            // > 20m workout -> 5m warmup (maybe 2m cardio, 3m mobility?)
+
+            let pulseTime = "60 sec";
+            let mobilityTime = "60 sec";
+
+            if (time > 30) {
+                pulseTime = "2 mins";
+                mobilityTime = "3 mins";
+                // Actually 3 mins of one stretch is boring. 
+                // Maybe we should return MULTIPLE mobility moves for long workouts?
+                // Feature for later. sticking to simple structure.
             }
 
-            return { cardio, mobility };
+            return {
+                name: "Warmup",
+                style: "Flow",
+                duration: time > 20 ? 5 : 2,
+                exercises: [
+                    {
+                        name: selectedPulse.name,
+                        target: pulseTime,
+                        category: "cardio",
+                        movementPattern: "Pulse",
+                        level: selectedPulse.level
+                    },
+                    {
+                        name: selectedMobility.name,
+                        target: mobilityTime,
+                        category: "activation",
+                        movementPattern: "Mobility",
+                        level: selectedMobility.level
+                    }
+                ]
+            };
         };
 
-        const { cardio: cardioMove, mobility: mobilityMove } = getWarmupForSystem(system, exclusions);
-
         // Add Warmup Block at start
-        dayStructure.unshift({
-            name: "Warmup",
-            style: "Flow",
-            duration: 5,
-            exercises: [
-                { name: cardioMove, target: "60 sec", category: "cardio", movementPattern: "Cardio" },
-                { name: mobilityMove, target: "30 sec", category: "activation", movementPattern: "Mobility" }
-            ]
-        });
+        dayStructure.unshift(generateWarmupBlock());
 
         // Return UI Compatible Object
         // Home.jsx expects: day, type, color, iconName, rawBlocks, duration

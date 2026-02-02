@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Play, Pause, CheckCircle, RotateCcw, Plus, Minus } from 'lucide-react';
+import { MdChevronLeft, MdChevronRight, MdPlayArrow, MdPause, MdCheckCircle, MdReplay, MdAdd, MdRemove } from 'react-icons/md';
 import { Button } from '../components/ui';
 
 import { EXERCISE_LIBRARY } from '../data/exercises';
@@ -277,7 +277,7 @@ export default function LiveSession() {
                 <div className="absolute top-0 inset-x-0 h-64 bg-indigo-500/20 blur-3xl pointer-events-none"></div>
                 <div className="mb-8 relative">
                     <div className="absolute inset-0 bg-indigo-500 blur-2xl opacity-20 animate-pulse rounded-full"></div>
-                    <CheckCircle className="w-24 h-24 text-indigo-400 relative z-10" />
+                    <MdCheckCircle className="w-24 h-24 text-indigo-400 relative z-10" />
                 </div>
                 <h1 className="text-4xl font-black mb-4 bg-gradient-to-r from-indigo-200 to-white bg-clip-text text-transparent">
                     Session Complete!
@@ -299,7 +299,7 @@ export default function LiveSession() {
 
                 <Button
                     onClick={completeWorkout}
-                    className="w-full max-w-md h-16 text-xl font-bold bg-white hover:bg-indigo-50 text-indigo-900 shadow-xl border-none"
+                    className="w-full max-w-md h-16 text-xl font-bold !bg-white hover:!bg-indigo-50 !text-indigo-900 shadow-xl border-none"
                 >
                     Finish & Log Workout
                 </Button>
@@ -333,14 +333,14 @@ export default function LiveSession() {
                             onClick={() => setIsRestPaused(!isRestPaused)}
                             className="w-full bg-indigo-900/50 hover:bg-indigo-900 text-indigo-100 border-2 border-indigo-700/50 rounded-xl px-8 py-4 h-auto font-bold flex items-center justify-center gap-2 transition-all"
                         >
-                            {isRestPaused ? <><Play className="w-5 h-5 fill-current" /> Resume Rest</> : <><Pause className="w-5 h-5 fill-current" /> Pause Rest</>}
+                            {isRestPaused ? <><MdPlayArrow className="w-5 h-5 fill-current" /> Resume Rest</> : <><MdPause className="w-5 h-5 fill-current" /> Pause Rest</>}
                         </Button>
 
                         <Button
                             onClick={skipRest}
-                            className="w-full bg-white text-indigo-950 hover:bg-indigo-50 border-none rounded-xl px-8 py-4 h-auto font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
+                            className="w-full bg-white !text-indigo-950 hover:bg-indigo-50 border-none rounded-xl px-8 py-4 h-auto font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
                         >
-                            Start Now <ChevronRight className="w-5 h-5" />
+                            Start Now <MdChevronRight className="w-5 h-5" />
                         </Button>
                     </div>
                 </div>
@@ -361,7 +361,7 @@ export default function LiveSession() {
             {/* Header */}
             <div className="flex items-center justify-between p-4">
                 <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800">
-                    <ChevronLeft className="w-6 h-6" />
+                    <MdChevronLeft className="w-6 h-6" />
                 </button>
                 <span className="font-bold text-lg">{day.day} Session</span>
 
@@ -373,7 +373,7 @@ export default function LiveSession() {
                         : "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
                         }`}
                 >
-                    {isAutoPlay ? <Play className="w-3 h-3 fill-current" /> : <Pause className="w-3 h-3 fill-current" />}
+                    {isAutoPlay ? <MdPlayArrow className="w-3 h-3 fill-current" /> : <MdPause className="w-3 h-3 fill-current" />}
                     {isAutoPlay ? "Auto-Play ON" : "Auto-Play OFF"}
                 </button>
             </div>
@@ -446,7 +446,7 @@ export default function LiveSession() {
                 {target.type === 'reps' && (
                     <div className="flex flex-col items-center mt-2 space-y-2">
                         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-500">
-                            <RotateCcw className="w-3 h-3 animate-spin py-0.5 duration-[3000ms]" />
+                            <MdReplay className="w-3 h-3 animate-spin py-0.5 duration-[3000ms]" />
                             <span>Tempo: 1 rep every {currentExercise.timing?.seconds_per_rep || 1}s</span>
                         </div>
                         <div className="flex items-center gap-4">
@@ -471,9 +471,9 @@ export default function LiveSession() {
                             }`}
                     >
                         {timeLeft === 0 ? (
-                            <><RotateCcw className="fill-current" /> Restart Timer</>
+                            <><MdReplay className="fill-current" /> Restart Timer</>
                         ) : (
-                            isActive ? <><Pause className="fill-current" /> Pause Timer</> : <><Play className="fill-current" /> Start Timer</>
+                            isActive ? <><MdPause className="fill-current" /> Pause Timer</> : <><MdPlayArrow className="fill-current" /> Start Timer</>
                         )}
                     </Button>
 
@@ -483,7 +483,7 @@ export default function LiveSession() {
                         variant="soft"
                         className={`w-full h-14 font-semibold text-lg flex items-center justify-center gap-2 ${target.type === 'reps' && timeLeft === 0 ? "bg-emerald-100 text-emerald-700 dark:text-emerald-400 dark:bg-emerald-900/20" : ""}`}
                     >
-                        {target.type === 'reps' ? <><CheckCircle className="w-5 h-5" /> Log {repsCompleted} & Next</> : "Skip / Next"}
+                        {target.type === 'reps' ? <><MdCheckCircle className="w-5 h-5" /> Log {repsCompleted} & Next</> : "Skip / Next"}
                     </Button>
                 </div>
             </div>
@@ -542,7 +542,7 @@ export default function LiveSession() {
                     onClick={handlePrev}
                     className="flex items-center gap-2 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition-colors"
                 >
-                    <ChevronLeft className="w-5 h-5" /> Previous
+                    <MdChevronLeft className="w-5 h-5" /> Previous
                 </button>
                 <div className="flex gap-1">
                     {/* Dots? Maybe too many. */}
@@ -551,7 +551,7 @@ export default function LiveSession() {
                     onClick={handleNext}
                     className="flex items-center gap-2 hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
-                    Next <ChevronRight className="w-5 h-5" />
+                    Next <MdChevronRight className="w-5 h-5" />
                 </button>
             </div>
         </div >

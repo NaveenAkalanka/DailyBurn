@@ -15,10 +15,10 @@ export default function DayView() {
 
     if (!dayData) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 p-4">
                 <div className="text-center">
-                    <h2 className="text-xl font-bold text-gray-900">Rest Day / Not Found</h2>
-                    <p className="mt-2 text-gray-600">This day is not in your current schedule.</p>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Rest Day / Not Found</h2>
+                    <p className="mt-2 text-gray-600 dark:text-slate-400">This day is not in your current schedule.</p>
                     <Button as={Link} to="/" className="mt-4">Back to Home</Button>
                 </div>
             </div>

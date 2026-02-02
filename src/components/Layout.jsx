@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { MdChevronLeft } from 'react-icons/md';
 import BottomNav from './BottomNav';
 
 export default function Layout({ children }) {
@@ -12,10 +12,10 @@ export default function Layout({ children }) {
     const showBottomNav = !location.pathname.startsWith('/live-session');
 
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50 relative selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300">
+        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300">
             {/* Mesh Gradient - Light */}
-            <div className="fixed inset-0 z-0 pointer-events-none opacity-60 mix-blend-multiply bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-transparent to-transparent"></div>
-            <div className="fixed inset-0 z-0 pointer-events-none opacity-60 mix-blend-multiply bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-indigo-100 via-transparent to-transparent"></div>
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-60 dark:opacity-20 mix-blend-multiply dark:mix-blend-normal bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-transparent to-transparent dark:from-slate-800"></div>
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-60 dark:opacity-20 mix-blend-multiply dark:mix-blend-normal bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-indigo-100 via-transparent to-transparent dark:from-slate-800"></div>
 
 
 

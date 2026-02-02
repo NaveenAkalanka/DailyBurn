@@ -11,6 +11,7 @@ import ExerciseLibrary from './pages/ExerciseLibrary.jsx'
 import Report from './pages/Report.jsx'
 import Settings from './pages/Settings.jsx'
 import LiveSession from './pages/LiveSession.jsx'
+import Debug from './pages/Debug.jsx'
 import Onboarding from './components/Onboarding.jsx'
 import Layout from './components/Layout.jsx'
 import SplashScreen from './components/SplashScreen.jsx'
@@ -32,6 +33,7 @@ function AppRoutes() {
             <Route path="/report" element={<Report />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/live-session" element={<LiveSession />} />
+            <Route path="/debug" element={<Debug />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Layout>

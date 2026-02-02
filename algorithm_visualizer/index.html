@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyBurn Core Logic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 25%);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .header {
+            flex: 0 0 auto;
+            text-align: center;
+            padding-top: 1.5rem;
+            padding-bottom: 1rem;
+            z-index: 10;
+            width: 100%;
+            background: linear-gradient(to bottom, #030712 0%, rgba(3, 7, 18, 0) 100%);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .visualizer-container {
+            flex: 1 1 auto;
+            width: 98%;
+            height: 100%;
+            margin-bottom: 10px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .mermaid {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 20;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+
+        .btn:hover {
+            opacity: 1;
+            color: #818cf8;
+            transform: scale(1.1);
+        }
+
+        /* Loading */
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>DailyBurn Engine</h1>
+        <p class="subtitle">Master Decision Tree v2.1</p>
+    </div>
+
+    <div class="visualizer-container" id="container">
+        <div id="loading">
+            <div
+                style="width: 20px; height: 20px; border: 2px solid #6366f1; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+            </div>
+            Initializing...
+        </div>
+        <div class="mermaid" id="diagram">
+            graph TD
+            %% STYLES
+            classDef input fill:#1e293b,stroke:#475569,color:#fff,stroke-width:2px;
+            classDef logic fill:#0f172a,stroke:#6366f1,color:#e0e7ff,stroke-width:2px;
+            classDef data fill:#334155,stroke:#475569,color:#cbd5e1;
+            classDef critical fill:#451a03,stroke:#f59e0b,color:#fff;
+            classDef finish fill:#064e3b,stroke:#10b981,color:#fff,stroke-width:4px;
+            classDef invisible fill:none,stroke:none;
+
+            %% SUBGRAPH 1: INPUTS
+            subgraph SG_INPUTS [Phase 1: Inputs]
+            InLevel("Fitness Level")
+            InDays("Frequency")
+            InTime("Duration")
+            InLimits("Constraints")
+            end
+            class InLevel,InDays,InTime,InLimits input
+
+            %% SUBGRAPH 2: SAFETY
+            subgraph SG_SAFETY [Phase 2: Safety Engine]
+            direction TB
+            SafetyFilter{"Safety Check"}
+
+            %% Explicit Exclusion Paths
+            PathNoBar[/"No Bar"/]
+            XBar["❌ Pull-ups<br />❌ Hanging Raises"]
+
+            PathNoFurn[/"No Furniture"/]
+            XFurn["❌ Dips<br />❌ Bulgarian Splits"]
+
+            PathNoWall[/"No Wall"/]
+            XWall["❌ Wall Sits<br />❌ Handstand Holds"]
+
+            PathKnee[/"Knee Pain"/]
+            XKnee["❌ Jump Squats<br />❌ Lunges<br />❌ Pistols"]
+
+            PathWrist[/"Wrist Pain"/]
+            XWrist["❌ Push-ups<br />❌ Burpees"]
+
+            PathJump[/"No Jumping"/]
+            XJump["❌ Box Jumps<br />❌ Plyometrics"]
+
+            SafePool[("Safe Exercise Pool")]
+
+            SafetyFilter --> PathNoBar --> XBar
+            SafetyFilter --> PathNoFurn --> XFurn
+            SafetyFilter --> PathNoWall --> XWall
+            SafetyFilter --> PathKnee --> XKnee
+            SafetyFilter --> PathWrist --> XWrist
+            SafetyFilter --> PathJump --> XJump
+
+            XBar & XFurn & XWall & XKnee & XWrist & XJump -.-> SafePool
+            end
+            class SafetyFilter critical
+            class SafePool data
+            class XBar,XFurn,XWall,XKnee,XWrist,XJump critical
+
+            InLimits --> SafetyFilter
+
+            %% SUBGRAPH 3: VOLUME
+            subgraph SG_VOLUME [Phase 3: Volume Engine]
+            CalcTarget{"Weekly Target"}
+            TgtVal["90m | 160m | 250m"]
+
+            DailyVol["Ideal Daily Time"]
+            ClampVol["Clamp (15-90m)"]
+
+            CalcTarget --> TgtVal --> DailyVol --> ClampVol
+
+            Rounds{"Rounds Logic"}
+            R2["2 Rounds (&lt;20m)"]
+            R3["3 Rounds (20-35m)"]
+            R4["4 Rounds (&gt;35m)"]
+
+            ClampVol --> Rounds
+            InTime -. "User Set" .-> Rounds
+
+            Rounds --> R2 & R3 & R4
+            end
+            class CalcTarget,Rounds logic
+
+            InLevel --> CalcTarget
+            InDays --> DailyVol
+
+            %% SUBGRAPH 4: SPLIT
+            subgraph SG_SPLIT [Phase 4: Split Logic]
+            DayCheck{"Day Index"}
+
+            Phos["PHOSPHAGEN<br />(Power)"]
+            Glyc["GLYCOLYTIC<br />(Burn)"]
+            Oxid["OXIDATIVE<br />(Endurance)"]
+
+            DayCheck -- "Day 1,4,7" --> Phos
+            DayCheck -- "Day 2,5" --> Glyc
+            DayCheck -- "Day 3,6" --> Oxid
+            end
+            class DayCheck logic
+
+            SafePool --> DayCheck
+
+            %% SUBGRAPH 5: MATRIX
+            subgraph SG_MATRIX [Phase 5: Selection]
+            Score["Affinity Scoring"]
+            Slots["Fill Slots:<br />Legs, Push, Pull, Core"]
+            Shuffle["Shuffle Candidates"]
+
+            Score --> Slots --> Shuffle
+            end
+            class Score logic
+
+            Phos & Glyc & Oxid --> Score
+
+            %% SUBGRAPH 6: ASSEMBLY
+            subgraph SG_BUILD [Phase 6: Assembly]
+            Warmup["Dynamic Warmup"]
+            Main["Main Sets"]
+            Boss{"Boss Battle?"}
+            Final(("FINAL PLAN"))
+
+            Warmup --> Main --> Boss --> Final
+            end
+            class Boss logic
+            class Final finish
+
+            Shuffle --> Main
+            R2 & R3 & R4 --> Main
+
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="zoomOut()" title="Zoom Out">─</button>
+        <button class="btn" onclick="resetZoom()" title="Reset View">Fit</button>
+        <button class="btn" onclick="zoomIn()" title="Zoom In">＋</button>
+    </div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose'
+        });
+
+        window.zoomIn = () => panZoom?.zoomIn();
+        window.zoomOut = () => panZoom?.zoomOut();
+        window.resetZoom = () => panZoom?.resetZoom();
+
+        let panZoom = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const element = document.querySelector('#diagram');
+
+            // Render Mermaid
+            try {
+                const { svg } = await mermaid.render('mermaid-svg', element.textContent);
+                element.innerHTML = svg;
+
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+
+                // Init Pan Zoom
+                const svgElement = element.querySelector('svg');
+                svgElement.style.width = '100%';
+                svgElement.style.height = '100%';
+
+                panZoom = svgPanZoom(svgElement, {
+                    zoomEnabled: true,
+                    controlIconsEnabled: false,
+                    fit: true,
+                    center: true,
+                    minZoom: 0.1,
+                    maxZoom: 15,
+                    onZoom: () => { },
+                    onPan: () => { }
+                });
+
+                // Auto-resize handler
+                window.addEventListener('resize', () => {
+                    panZoom.resize();
+                    panZoom.fit();
+                    panZoom.center();
+                });
+
+            } catch (e) {
+                console.error("Mermaid Render Error:", e);
+                document.getElementById('loading').innerText = "Render Error. Check Console.";
+            }
+        });
+    </script>
+    <style>
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</body>
+
+</html>

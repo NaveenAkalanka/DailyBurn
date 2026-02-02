@@ -1,0 +1,175 @@
+DAILYBURN - ALL WORKOUTS (NAMES ONLY)
+=====================================
+
+
+--- BEGINNER ---
+
+  [Legs]
+    - Squats
+    - Forward Lunges
+    - Reverse Lunges
+    - Walking Lunges
+    - Glute Bridges
+    - Calf Raises
+    - Side Lunges
+    - Good Mornings
+    - Box Squats
+    - Step Ups
+
+  [Push]
+    - Incline Push-ups
+    - Wall Push-ups
+    - Bench Dips
+
+  [Pull]
+    - Negative Pull-ups
+    - Assisted Pull-ups
+    - Incline Rows
+    - Scapular Pull-ups
+
+  [Core]
+    - Plank
+    - Knee Plank
+    - Side Plank
+    - Crunches
+    - Lying Leg Raises
+    - Russian Twists
+    - Bird-Dog
+    - Dead Bug
+
+  [Full Body]
+    - Jumping Jacks
+    - Burpees (No Push-up)
+    - Inchworm
+    - High Knees
+    - Butt Kicks
+    - Mountain Climbers
+    - Bear Crawls
+
+  [Warmup]
+    - Seal Jacks
+    - Boxer Shuffle
+    - March in Place
+    - Arm Circles
+    - Shoulder Rolls
+    - Cat-Cow Stretch
+    - Dynamic Chest Openers
+    - Wrist Circles
+    - Forward Leg Swings
+    - Lateral Leg Swings
+    - Hip Circles
+    - Torso Twists
+
+
+--- INTERMEDIATE ---
+
+  [Legs]
+    - Jump Squats
+    - Bulgarian Split Squats
+    - Assisted Pistol Squats
+    - Shrimp Squats
+    - Cossack Squats
+    - Side-to-Side Squats
+    - Box Jumps
+    - Tuck Jumps
+
+  [Push]
+    - Standard Push-ups
+    - Decline Push-ups
+    - Diamond Push-ups
+    - Pike Push-ups
+    - Parallel Bar Dips
+    - Close-Grip Push-ups
+
+  [Pull]
+    - Standard Pull-ups
+    - Chin-ups
+    - Australian Pull-ups
+
+  [Core]
+    - Hollow Body Hold
+    - Reverse Plank
+    - Plank w/ Leg Raise
+    - Bicycle Crunches
+    - Hanging Knee Raises
+    - Tuck L-Sit
+
+  [Full Body]
+    - Standard Burpees
+    - Mountain Climber Twists
+
+  [Warmup]
+    - Deep Squat Hold
+    - World's Greatest Stretch
+
+
+--- ADVANCED ---
+
+  [Legs]
+    - Pistol Squats
+    - Nordic Curls
+    - Single-Leg Deadlift
+    - Sissy Squats
+    - Shrimp Squat Jumps
+    - High Box Jumps
+
+  [Push]
+    - One-Arm Push-up (Asst)
+    - Planche Leans
+    - Tuck Planche
+    - Wall Handstand Push-ups
+
+  [Pull]
+    - Archer Pull-ups
+    - Muscle-Ups
+    - Front Lever Tuck
+    - Back Lever Tuck
+
+  [Core]
+    - Dragon Flags
+    - L-Sit
+    - V-Sit
+    - Plank w/ Arm & Leg Raise
+    - Human Flag (Tuck)
+
+  [Full Body]
+    - Freestanding Handstand
+    - Handstand Walks
+    - Burpees w/ Tuck Jump
+
+
+--- EXPERT ---
+
+  [Legs]
+    - One-Legged Calf Raises
+    - Side-to-Side Jump Squats
+
+  [Push]
+    - One-Arm Push-up
+    - Full Planche
+    - Iron Cross
+    - 90 Degree Push-ups
+    - Freestanding HSPU
+    - Planche Push-ups
+    - Impossible Dips
+
+  [Pull]
+    - One-Arm Pull-up
+    - Victorian Cross
+    - Full Front Lever
+    - Full Back Lever
+    - Muscle-up to Front Lever
+
+  [Core]
+    - Full Human Flag
+    - Side Lever / Human Flag
+    - Manna
+
+  [Full Body]
+    - Plyo Push-up to Squat
+    - Handstand Pirouettes
+    - One-Arm Handstand
+    - Crow Pose
+    - Headstand
+    - Elbow Lever
+

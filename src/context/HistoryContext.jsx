@@ -21,7 +21,7 @@ export function HistoryProvider({ children }) {
     const addEntry = (session) => {
         const entry = {
             id: crypto.randomUUID(),
-            completedAt: new Date().toISOString(),
+            completedAt: session.completedAt || new Date().toISOString(),
             ...session
         };
         const newHistory = [entry, ...history];
