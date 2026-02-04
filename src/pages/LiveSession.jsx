@@ -469,7 +469,7 @@ export default function LiveSession() {
 
                     {/* Timer Text */}
                     <div className="relative z-10 flex flex-col items-center">
-                        <span className={`text-[14vmin] font-black tabular-nums tracking-tighter transition-colors leading-none ${timeLeft === 0 ? "text-emerald-500" : "text-inherit"}`}>
+                        <span className={`text-[min(14vmin,6rem)] font-black tabular-nums tracking-tighter transition-colors leading-none ${timeLeft === 0 ? "text-emerald-500" : "text-inherit"}`}>
                             {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
                         </span>
                         <span className="text-sm font-bold opacity-50 mt-2 uppercase tracking-widest">
