@@ -90,7 +90,7 @@ export default function Settings() {
 
                 <div className="text-center pt-8">
                     <p className="text-xs text-slate-400">DailyBurn v1.0.0</p>
-                    <Link to="/debug" className="text-[10px] text-slate-800 dark:text-slate-400 mt-4 block p-4">DevTools</Link>
+
                 </div>
             </div>
             {/* Reset Confirmation Modal */}

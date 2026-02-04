@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="public/DailyBurn.svg" alt="DailyBurn Logo" width="120" height="120" />
+  <img src="public/DailyBurn-White.svg" alt="DailyBurn Logo" width="120" height="120" />
 
   # DailyBurn
   
