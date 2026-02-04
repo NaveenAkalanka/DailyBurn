@@ -208,7 +208,7 @@ export const DayDetailCard = ({ d }) => {
       />
 
       {/* Navbarish Header */}
-      <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-4 py-3 flex items-center gap-4 dark:border-slate-800">
+      <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-4 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-3 flex items-center gap-4 dark:border-slate-800">
         <button
           onClick={() => navigate(-1)}
           className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"

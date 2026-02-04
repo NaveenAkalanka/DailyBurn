@@ -427,8 +427,8 @@ export function generateSciencePlan({ selectedDays, time, exclusions, fitnessLev
             let mobilityTime = "60 sec";
 
             if (time > 30) {
-                pulseTime = "2 mins";
-                mobilityTime = "3 mins";
+                pulseTime = "120 sec";
+                mobilityTime = "180 sec";
                 // Actually 3 mins of one stretch is boring. 
                 // Maybe we should return MULTIPLE mobility moves for long workouts?
                 // Feature for later. sticking to simple structure.

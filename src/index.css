@@ -4,10 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  @apply h-full bg-slate-50 dark:bg-slate-950;
+  overscroll-behavior-y: none;
+  /* Disables "bounce" effect */
+}
+
 body {
-  @apply font-sans antialiased text-gray-900 bg-slate-50 min-h-screen selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300;
+  @apply font-sans antialiased text-gray-900 bg-slate-50 dark:bg-slate-950 min-h-screen selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300;
   font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
-  font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+  overscroll-behavior-y: none;
 }
 
 /* Global "Nuclear" Reset for Clean UI */

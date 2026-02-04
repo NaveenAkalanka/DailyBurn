@@ -91,9 +91,9 @@ export default function ExerciseLibrary() {
             </div>
 
             {/* Grid */}
-            <div className="p-4 grid grid-cols-1 gap-4 pb-20">
+            <div className="grid grid-cols-1 pb-20">
                 {filteredExercises.map(ex => (
-                    <div key={ex.id} className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm grid grid-cols-[4rem_1fr_3rem] gap-4 items-center min-h-[7rem]">
+                    <div key={ex.id} className="bg-white dark:bg-slate-900 p-4 border-b border-slate-100 dark:border-slate-800 grid grid-cols-[4rem_1fr_3rem] gap-4 items-center min-h-[7rem]">
                         {/* Icon Placeholder */}
                         <div className="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0">
                             <MdFitnessCenter className="h-8 w-8 text-slate-300" />

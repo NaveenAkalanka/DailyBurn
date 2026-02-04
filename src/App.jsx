@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
+import { App as CapacitorApp } from '@capacitor/app';
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { UserProvider, useUser } from './context/UserContext.jsx'
 import { HistoryProvider } from './context/HistoryContext.jsx'
@@ -43,6 +44,29 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Handle Android Hardware Back Button
+    const setupListener = async () => {
+      const listener = await CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+        if (window.location.pathname === '/') {
+          CapacitorApp.exitApp();
+        } else {
+          // Go back in history
+          navigate(-1);
+        }
+      });
+      return listener;
+    };
+
+    const listenerPromise = setupListener();
+
+    return () => {
+      listenerPromise.then(l => l.remove());
+    };
+  }, [navigate]);
+
   const [isLoading, setIsLoading] = useState(() => {
     // Only show splash if not seen in this session
     return !sessionStorage.getItem('dailyburn_has_seen_splash');

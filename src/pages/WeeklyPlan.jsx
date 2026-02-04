@@ -32,11 +32,11 @@ export default function WeeklyPlan() {
                 <h1 className="text-lg font-bold text-slate-900 dark:text-white">Full Weekly Schedule</h1>
             </div>
 
-            <div className="p-4 space-y-8 pb-12">
+            <div className="space-y-8 pb-12">
                 {currentPlan.map((day, i) => (
-                    <div key={i} className="space-y-4">
+                    <div key={i} className="space-y-0">
                         {/* Day Header */}
-                        <div className="flex items-center justify-between sticky top-[calc(60px+env(safe-area-inset-top))] z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center justify-between sticky top-[calc(60px+env(safe-area-inset-top))] z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm p-4 border-y border-slate-100 dark:border-slate-800">
                             <div>
                                 <h2 className="text-xl font-black text-slate-900 dark:text-white">{day.day}</h2>
                                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mt-0.5 opacity-80 flex items-center gap-2">
@@ -66,9 +66,9 @@ export default function WeeklyPlan() {
                         </div>
 
                         {/* Content Preview */}
-                        <div className="space-y-3">
+                        <div className="space-y-0">
                             {day.rawBlocks.map((block, j) => (
-                                <div key={j} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+                                <div key={j} className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
                                     <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-2 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{block.name}</span>
                                         <span className="text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">{block.style || "Standard"}</span>

@@ -63,7 +63,6 @@ export default function LiveSession() {
         if (!day) navigate('/');
     }, [day, navigate]);
 
-    // Flatten all exercises into a single list
     const exercises = React.useMemo(() => {
         if (!day) return [];
         return day.rawBlocks.flatMap(block =>
@@ -103,8 +102,9 @@ export default function LiveSession() {
     // Derived Logic for Timer / Targets
     const getTarget = (ex) => {
         if (!ex) return { type: 'time', val: 0, timeDuration: 0 };
-        const isTimeBased = ex.blockStyle === "Oxidative" || (ex.target && ex.target.includes("sec"));
-        const timeVal = isTimeBased ? 45 : 60;
+
+        const targetStr = ex.target || "";
+        const isTimeBased = ex.blockStyle === "Oxidative" || targetStr.includes("sec") || targetStr.includes("min");
 
         const getMaxReps = (valStr) => {
             if (!valStr) return 60;
@@ -116,16 +116,26 @@ export default function LiveSession() {
             return parseInt(clean, 10) || 60;
         };
 
-        let calculatedTime = timeVal;
-        if (!isTimeBased) {
-            const maxReps = getMaxReps(ex.target);
+        let calculatedTime = 45; // Default fallback
+
+        if (isTimeBased) {
+            // Parse time from string (e.g. "120 sec" or "2 mins")
+            const numVal = getMaxReps(targetStr);
+            if (targetStr.includes("min")) {
+                calculatedTime = numVal * 60;
+            } else {
+                calculatedTime = numVal;
+            }
+        } else {
+            // Reps based math
+            const maxReps = getMaxReps(targetStr);
             const secPerRep = ex.timing?.seconds_per_rep || 3.0;
             calculatedTime = Math.ceil(maxReps * secPerRep);
         }
 
         return {
             type: isTimeBased ? 'time' : 'reps',
-            val: ex.target || "10-12",
+            val: targetStr || "10-12",
             timeDuration: calculatedTime
         };
     };
@@ -311,7 +321,7 @@ export default function LiveSession() {
     // RENDER: REST SCREEN
     if (isRestingState) {
         return (
-            <div className="flex flex-col min-h-screen bg-indigo-950 text-white items-center justify-center p-8 text-center animate-in fade-in zoom-in-95 duration-300">
+            <div className="flex flex-col h-[100dvh] overflow-hidden bg-indigo-950 text-white items-center justify-evenly p-6 text-center animate-in fade-in zoom-in-95 duration-300 pt-[env(safe-area-inset-top)]">
                 <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
 
                 {/* Content Wrapper with Z-Index */}
@@ -320,13 +330,22 @@ export default function LiveSession() {
                         {isRestPaused ? "REST PAUSED" : "GET READY"}
                     </h2>
 
-                    <div className="text-[12rem] font-black leading-none mb-4 tabular-nums text-white">
+                    <div className="text-[15vmin] font-black leading-none mb-4 tabular-nums text-white">
                         {restTimer}
                     </div>
 
-                    <div className="mb-8">
-                        <p className="text-indigo-200 text-sm font-bold uppercase tracking-widest mb-2">Up Next</p>
-                        <h3 className="text-3xl font-black text-white">{nextExercise?.name || "Finish Line"}</h3>
+                    <div className="mb-8 flex flex-col items-center">
+                        {nextExercise?.is_challenge && (
+                            <div className="mb-3 animate-bounce bg-amber-500 text-amber-950 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-amber-500/20">
+                                ⚠️ Boss Battle Next
+                            </div>
+                        )}
+                        <p className={`text-sm font-bold uppercase tracking-widest mb-2 ${nextExercise?.is_challenge ? "text-amber-200" : "text-indigo-200"}`}>
+                            Up Next
+                        </p>
+                        <h3 className={`text-3xl font-black ${nextExercise?.is_challenge ? "text-amber-100" : "text-white"}`}>
+                            {nextExercise?.name || "Finish Line"}
+                        </h3>
                     </div>
 
                     <div className="flex flex-col items-center gap-4 w-full max-w-xs">
@@ -357,8 +376,19 @@ export default function LiveSession() {
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - ((target.timeDuration - timeLeft) / target.timeDuration) * circumference;
 
+    const isBoss = currentExercise.is_challenge;
+
+    // THEME VARIABLES
+    const bgClass = isBoss
+        ? "bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-slate-950"
+        : "bg-slate-50 dark:bg-slate-950";
+
+    const textMainClass = isBoss ? "text-amber-900 dark:text-amber-100" : "text-slate-900 dark:text-white";
+    const ringColorClass = isBoss ? "stroke-amber-500" : "stroke-blue-600";
+    const ringCompleteClass = isBoss ? "stroke-amber-400/30" : "stroke-emerald-500"; // When done
+
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
+        <div className={`flex flex-col h-[100dvh] overflow-hidden ${bgClass} ${textMainClass} transition-colors duration-500 pt-[env(safe-area-inset-top)]`}>
             {/* Header */}
             <div className="flex items-center justify-between p-4">
                 <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800">
@@ -382,33 +412,40 @@ export default function LiveSession() {
             {/* Progress Bar */}
             <div className="h-2 w-full bg-slate-200 dark:bg-slate-900">
                 <div
-                    className="h-full bg-blue-600 transition-all duration-300 ease-linear"
+                    className={`h-full transition-all duration-300 ease-linear ${isBoss ? "bg-amber-500" : "bg-blue-600"}`}
                     style={{ width: `${progressPercent}%` }}
                 />
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-8 text-center">
+            <div className="flex-1 flex flex-col items-center justify-evenly p-4 text-center w-full max-w-md mx-auto">
+
+                {/* Boss Badge */}
+                {isBoss && (
+                    <div className="animate-pulse bg-amber-500/10 border border-amber-500/50 text-amber-600 dark:text-amber-400 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-amber-500/20">
+                        👑 Boss Battle
+                    </div>
+                )}
 
                 {/* Meta */}
                 <div className="space-y-2">
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                    <span className="text-xs font-bold uppercase tracking-widest opacity-60">
                         {currentExercise.blockName} • {currentIndex + 1} of {exercises.length}
                     </span>
                     <h1 className="text-4xl font-black leading-tight">
                         {currentExercise.name}
                     </h1>
                     {target.type === 'reps' && (
-                        <div className="inline-block bg-slate-200 dark:bg-slate-800 px-4 py-1.5 rounded-full mt-2">
-                            <span className="text-lg font-bold text-slate-700 dark:text-slate-300">Target: {target.val} reps</span>
+                        <div className={`inline-block px-4 py-1.5 rounded-full mt-2 ${isBoss ? "bg-amber-500/20 text-amber-800 dark:text-amber-200" : "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300"}`}>
+                            <span className="text-lg font-bold">Target: {target.val}{String(target.val).toLowerCase().includes('reps') ? '' : ' reps'}</span>
                         </div>
                     )}
                 </div>
 
                 {/* VISUAL TIMER: CIRCULAR PROGRESS */}
-                <div className="relative w-72 h-72 flex items-center justify-center">
+                <div className="relative w-[55vmin] h-[55vmin] max-w-72 max-h-72 flex items-center justify-center">
                     {/* Background Circle */}
-                    <svg className="absolute inset-0 w-full h-full rotate-[-90deg]">
+                    <svg className="absolute inset-0 w-full h-full rotate-[-90deg]" viewBox="0 0 288 288">
                         <circle
                             cx="144"
                             cy="144"
@@ -421,8 +458,7 @@ export default function LiveSession() {
                             cx="144"
                             cy="144"
                             r={radius}
-                            className={`transition-all duration-1000 ease-linear ${timeLeft === 0 ? "stroke-emerald-500" : "stroke-blue-600"
-                                }`}
+                            className={`transition-all duration-1000 ease-linear ${timeLeft === 0 ? "stroke-emerald-500" : ringColorClass}`}
                             strokeWidth="12"
                             fill="none"
                             strokeDasharray={circumference}
@@ -433,8 +469,7 @@ export default function LiveSession() {
 
                     {/* Timer Text */}
                     <div className="relative z-10 flex flex-col items-center">
-                        <span className={`text-7xl font-black tabular-nums tracking-tighter transition-colors ${timeLeft === 0 ? "text-emerald-500" : "text-slate-900 dark:text-white"
-                            }`}>
+                        <span className={`text-[14vmin] font-black tabular-nums tracking-tighter transition-colors leading-none ${timeLeft === 0 ? "text-emerald-500" : "text-inherit"}`}>
                             {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
                         </span>
                         <span className="text-sm font-bold opacity-50 mt-2 uppercase tracking-widest">
@@ -452,10 +487,10 @@ export default function LiveSession() {
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col items-center min-w-[80px]">
-                                <span className="text-4xl font-black text-blue-600 dark:text-blue-400 tabular-nums animate-in slide-in-from-bottom-2 fade-in duration-300">
+                                <span className={`text-4xl font-black tabular-nums animate-in slide-in-from-bottom-2 fade-in duration-300 ${isBoss ? "text-amber-500" : "text-blue-600 dark:text-blue-400"}`}>
                                     {repsCompleted}
                                 </span>
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Rep Count</span>
+                                <span className="text-xs font-bold opacity-50 uppercase tracking-widest mt-1">Rep Count</span>
                             </div>
                         </div>
                     </div>
@@ -466,9 +501,9 @@ export default function LiveSession() {
                     {/* Timer Control */}
                     <Button
                         onClick={toggleTimer}
-                        className={`w-full h-16 text-xl font-bold rounded-2xl flex items-center justify-center gap-3 transition-all ${isActive
+                        className={`w-full h-14 text-xl font-bold rounded-2xl flex items-center justify-center gap-3 transition-all ${isActive
                             ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400"
-                            : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30"
+                            : isBoss ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg shadow-amber-600/30" : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30"
                             }`}
                     >
                         {timeLeft === 0 ? (
