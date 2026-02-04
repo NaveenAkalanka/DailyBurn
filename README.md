@@ -12,6 +12,7 @@
 
   <p>
     <a href="#-core-philosophy">Philosophy</a> •
+    <a href="#-download-app">Download</a> •
     <a href="#-tech-stack">Tech Stack</a> •
     <a href="#-getting-started">Getting Started</a>
   </p>
@@ -29,6 +30,18 @@
 
 > **Elite Concepts. Simple Execution.** 
 > Use the same training principles as pro athletes (Periodization, Energy Systems) without needing a PhD. The app handles the math; you just handle the sweat.
+
+---
+
+## 📲 Download App
+
+Experience DailyBurn on your Android device.
+
+<a href="./app-releases/android/DailyBurn.apk">
+  <img alt="Get it on GitHub" src="https://img.shields.io/badge/Android-APK_Ready-3DDC84?style=for-the-badge&logo=android&logoColor=white" />
+</a>
+
+> **iOS Version**: Coming to the App Store soon!
 
 ---
 
