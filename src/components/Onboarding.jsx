@@ -9,15 +9,55 @@ const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 const SLIDES = [
     {
         id: "intro",
-        title: "Welcome to DailyBurn",
+        title: "Democratizing Sports Science",
         content: (
             <div className="space-y-4 text-center">
                 <img src="/DailyBurn.svg" alt="Logo" className="w-24 h-24 mx-auto mb-4 dark:brightness-0 dark:invert" />
-                <p className="text-lg text-slate-600 dark:text-slate-300">
-                    Your personalized path to fitness, powered by science.
+                <p className="text-lg text-slate-600 dark:text-slate-300 font-medium">
+                    Elite-level Calisthenics & Conditioning, simplified.
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                    We build a plan based on your schedule and equipment, optimized for real physiological progression.
+                    We take complex concepts like <strong>Periodization</strong> & <strong>Biomechanics</strong> and handle the math for you. You just handle the sweat.
+                </p>
+            </div>
+        )
+    },
+    {
+        id: "no_ai",
+        title: "Math & Science > AI",
+        icon: <MdScience className="w-12 h-12 text-blue-500 mx-auto mb-4" />,
+        content: (
+            <div className="space-y-4 text-center">
+                <p className="text-slate-600 dark:text-slate-300">
+                    Most "AI" workout apps are just hallucinations.
+                </p>
+                <p className="text-slate-600 dark:text-slate-300">
+                    <strong>DailyBurn is different.</strong> We use proven physiological algorithms and real-world math to ensure your safety and progression.
+                </p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 italic mt-4">
+                    "Zero-Excuses" Philosophy: We adapt to your time, equipment, and energy.
+                </p>
+            </div>
+        )
+    },
+    {
+        id: "systems_intro",
+        title: "The 3 Fuel Tanks",
+        icon: <div className="flex justify-center gap-2 mb-4">
+            <MdBolt className="w-8 h-8 text-yellow-500" />
+            <MdWhatshot className="w-8 h-8 text-orange-500" />
+            <MdMonitorHeart className="w-8 h-8 text-green-500" />
+        </div>,
+        content: (
+            <div className="space-y-4 text-center">
+                <p className="text-slate-600 dark:text-slate-300">
+                    Your body isn't just one engine. It has <strong>3 distinct Energy Systems</strong>.
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                    Most apps just "burn calories". We specifically target each tank to build a complete athlete: <strong>Power, Stamina, and Endurance.</strong>
+                </p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+                    Let's meet your engines...
                 </p>
             </div>
         )

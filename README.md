@@ -8,10 +8,10 @@
 
   # DailyBurn
   
-  **Your Intelligent, Adaptive Fitness Companion**
+  **Democratizing Sports Science**
 
   <p>
-    <a href="#-features">Features</a> •
+    <a href="#-core-philosophy">Philosophy</a> •
     <a href="#-tech-stack">Tech Stack</a> •
     <a href="#-getting-started">Getting Started</a>
   </p>
@@ -27,22 +27,55 @@
 
 <br />
 
-> **Train Smarter, Not Harder.** DailyBurn is a science-based workout planner that adapts to your equipment, fitness level, and schedule. Whether you're at home or in the gym, get a plan that works.
+> **Elite Concepts. Simple Execution.** 
+> Use the same training principles as pro athletes (Periodization, Energy Systems) without needing a PhD. The app handles the math; you just handle the sweat.
 
 ---
 
-## 🌟 Features
+## 🧬 Core Philosophy
 
-- **🧠 Smart Plan Generation**: Algorithms that build balanced 7-day splits based on your focus (Hypertrophy, Strength, etc.).
-- **🏋️ Exercise Library**: Comprehensive database with video tutorials and muscle-group filtering.
-- **📅 Weekly Schedule**: Interactive calendar to track your weekly progress and upcoming sessions.
-- **💾 Local First & Secure**: 
-  - **Web**: Uses local storage for instant access.
-  - **Mobile**: Uses Native Secure Storage for reliable data persistence on iOS & Android.
-- **📱 Fully Responsive & Native**: Built as a PWA, usable on desktop or installed as a native app via Capacitor.
-- **🎨 Modern UI**: 
-  - **Dark Mode**: Fully supported system-wide dark theme.
-  - **Glassmorphism**: Sleek, modern aesthetic with smooth animations.
+### 1. The 3 Fuel Tanks (Energy Systems)
+Your body isn't just one engine. To build a complete athlete, we target all three biological energy pathways:
+- ⚡ **Phosphagen (System 1)**: Explosive power (1-10s).
+- 🔥 **Glycolytic (System 2)**: High-intensity "burn" (30s-2m).
+- 🫀 **Oxidative (System 3)**: Endurance and recovery.
+
+### 2. Zero-Excuses Architecture
+We eliminate every barrier to entry.
+- **Wrist Pain?** -> We swap to knuckle/forearm variants.
+- **No Equipment?** -> We generate "Furniture" or "Floor-only" plans.
+- **No Time?** -> "High-Density Circuits" give you a full workout in 15 mins.
+
+### 3. Gamified Consistency
+Doing pushups is boring. **Leveling up gives you dopamine.**
+- **Variation Matrix**: We change the movement pattern every round to keep your brain engaged.
+- **Boss Battles**: End every session with a challenge to test your limits.
+
+### 4. Safety & Progression (The Safety Funnel)
+Visualizing progression ensures you never plateau.
+- **The Safety Funnel**: Beginners are protected from dangerous moves until they earn the right stats.
+- **Real-World Values**: Rep counts are mathematically calculated based on human speed, not random numbers.
+
+---
+
+## 🤖 Why No AI?
+
+**Math > Hallucinations.**
+Most "AI" fitness apps generate random workouts that *look* coherent but lack physiological structure. 
+
+**DailyBurn is different.**
+We use deterministic, physiological algorithms. We know exactly *why* a set is 12 reps and not 15 (Time Under Tension). We rely on **Sports Science**, not Large Language Models.
+
+---
+
+## 📉 Algorithm Visualizer
+
+Want to see the engine under the hood?
+We've included a standalone tool to visualize how our periodization logic works.
+
+👉 **[View Algorithm Visualizer](./algorithm_visualizer)**
+
+Open `algorithm_visualizer/index.html` to play with the parameters and see how the app constructs training blocks in real-time.
 
 ## 🛠️ Tech Stack
 

@@ -64,9 +64,41 @@ export default function Settings() {
                     </div>
                 </section>
 
+
+                {/* Mission Section */}
+                <section>
+                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Our Mission</h2>
+                    <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-5 space-y-4">
+                        <div>
+                            <h3 className="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+                                <span className="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 p-1 rounded">🎯</span> Democratizing Sports Science
+                            </h3>
+                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                                Bringing elite-level training concepts (Energy Systems, Periodization) to everyone. No "Bro-Science", just physiology.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 className="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+                                <span className="bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 p-1 rounded">🎮</span> Gamifying Consistency
+                            </h3>
+                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                                Calisthenics shouldn't be boring. We use Variation Matrices to keep every session fresh and engaging.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 className="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+                                <span className="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 p-1 rounded">🛡️</span> Zero-Excuses & Safety
+                            </h3>
+                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                                Wrist pain? No time? No equipment? We adapt. Safe by Design means we protect beginners while challenging athletes.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Developer Section */}
                 <section>
-                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Developer</h2>
+                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 text-center">Developer</h2>
                     <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 text-center">
                         <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">Designed & Developed by</p>
                         <a
