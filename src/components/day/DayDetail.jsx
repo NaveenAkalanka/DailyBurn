@@ -105,7 +105,7 @@ export const ExerciseRow = ({ ex, onSwapClick }) => {
   const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " exercise tutorial")}`;
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+    <div className={`p-4 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors grid ${onSwapClick ? 'grid-cols-[auto_3rem_1fr_auto]' : 'grid-cols-[3rem_1fr_auto]'} gap-4 items-center min-h-[5.5rem]`}>
       {/* Swap Button (Left) */}
       {/* Swap Button (Left) */}
       {onSwapClick && (
@@ -124,12 +124,12 @@ export const ExerciseRow = ({ ex, onSwapClick }) => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-0.5">
-          <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
-            {ex.name}
-          </h4>
+      <div className="flex flex-col justify-center min-w-0">
+        <h4 className="font-bold text-slate-900 dark:text-slate-100 leading-tight mb-1 text-sm line-clamp-2 min-h-[2.5em] flex items-center">
+          {ex.name}
+        </h4>
 
+        <div className="flex flex-wrap items-center gap-2">
           {/* Level Badge - Hydrated on fly if missing */}
           {(() => {
             const libEx = EXERCISE_LIBRARY.find(e => e.name === ex.name);
@@ -144,21 +144,18 @@ export const ExerciseRow = ({ ex, onSwapClick }) => {
             };
 
             return (
-              <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide ${colors[level] || "bg-slate-100 text-slate-500"}`}>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide whitespace-nowrap ${colors[level] || "bg-slate-100 text-slate-500"}`}>
                 {level}
               </span>
             );
           })()}
 
           {/* Duration Badge */}
-          <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 whitespace-nowrap">
             <MdAccessTime className="w-3 h-3" />
             {durationLabel}
           </span>
         </div>
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-          {ex.target || "10-12 reps"}
-        </p>
       </div>
 
       {/* Tutorial Link (Right) */}
@@ -166,7 +163,7 @@ export const ExerciseRow = ({ ex, onSwapClick }) => {
         href={youtubeSearchUrl}
         target="_blank"
         rel="noreferrer"
-        className="text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-full transition-colors"
+        className="text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-full transition-colors justify-self-end"
         title="Watch Tutorial"
       >
         <MdPlayCircle className="h-6 w-6" />

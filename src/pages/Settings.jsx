@@ -64,6 +64,30 @@ export default function Settings() {
                     </div>
                 </section>
 
+                {/* Developer Section */}
+                <section>
+                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Developer</h2>
+                    <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 text-center">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">Designed & Developed by</p>
+                        <a
+                            href="https://github.com/NaveenAkalanka"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-lg font-black text-blue-600 dark:text-blue-400 hover:underline block mb-4"
+                        >
+                            Naveen Akalanka
+                        </a>
+
+                        <a href="https://www.buymeacoffee.com/naveenakalanka" target="_blank" rel="noreferrer" className="inline-block transition-transform hover:scale-105">
+                            <img
+                                src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                                alt="Buy Me A Coffee"
+                                className="h-10 w-auto"
+                            />
+                        </a>
+                    </div>
+                </section>
+
                 <div className="text-center pt-8">
                     <p className="text-xs text-slate-400">DailyBurn v1.0.0</p>
                     <Link to="/debug" className="text-[10px] text-slate-800 dark:text-slate-400 mt-4 block p-4">DevTools</Link>

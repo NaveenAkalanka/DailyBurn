@@ -30,7 +30,7 @@ export default function ExerciseLibrary() {
     });
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950">
+        <div className="min-h-screen bg-white dark:bg-slate-950 max-w-full overflow-x-hidden">
             {/* Header */}
             <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-4 pb-3 pt-[calc(env(safe-area-inset-top)+1.5rem)] flex items-center gap-4 border-b border-slate-100 dark:border-slate-800">
                 <button
@@ -93,43 +93,24 @@ export default function ExerciseLibrary() {
             {/* Grid */}
             <div className="p-4 grid grid-cols-1 gap-4 pb-20">
                 {filteredExercises.map(ex => (
-                    <div key={ex.id} className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex gap-4">
+                    <div key={ex.id} className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm grid grid-cols-[4rem_1fr_3rem] gap-4 items-center min-h-[7rem]">
                         {/* Icon Placeholder */}
                         <div className="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0">
                             <MdFitnessCenter className="h-8 w-8 text-slate-300" />
                         </div>
 
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between mb-1">
-                                <div>
-                                    <h3 className="font-bold text-slate-900 dark:text-white truncate pr-2">{ex.name}</h3>
-                                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{ex.pattern} • {ex.sub_pattern}</p>
-                                </div>
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${ex.level === "Beginner" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                        <div className="flex flex-col justify-center min-w-0 h-full">
+                            <div className="mb-1">
+                                <h3 className="font-bold text-slate-900 dark:text-white leading-tight line-clamp-2 text-sm min-h-[2.5em] flex items-center">{ex.name}</h3>
+                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">{ex.pattern} • {ex.sub_pattern}</p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider whitespace-nowrap w-fit ${ex.level === "Beginner" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
                                     ex.level === "Intermediate" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
                                         "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
                                     }`}>
                                     {ex.level === "Expert" ? "Advanced" : ex.level}
                                 </span>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 mt-3">
-                                {/* System Affinity Badges */}
-                                {Object.entries(ex.system_affinity).map(([sys, val]) => (
-                                    val >= 5 && (
-                                        <div key={sys} className="flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-700">
-                                            {ICONS[sys]}
-                                            <span className="capitalize">{sys}</span>
-                                        </div>
-                                    )
-                                ))}
-
-                                {/* Requirement Badges */}
-                                {ex.requirements.map(req => (
-                                    <span key={req} className="text-[10px] font-bold text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md">
-                                        {req}
-                                    </span>
-                                ))}
                             </div>
                         </div>
 
@@ -138,7 +119,7 @@ export default function ExerciseLibrary() {
                             href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " exercise tutorial")}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="bg-slate-50 dark:bg-slate-800 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-3 rounded-xl flex items-center justify-center transition-colors self-center"
+                            className="bg-slate-50 dark:bg-slate-800 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 w-12 h-12 rounded-xl flex items-center justify-center transition-colors self-center justify-self-end"
                             title="Watch Tutorial"
                         >
                             <MdPlayCircle className="h-6 w-6" />
