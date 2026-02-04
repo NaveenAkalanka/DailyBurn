@@ -209,7 +209,6 @@ export default function Onboarding() {
     // Persistence Effect
     useEffect(() => {
         localStorage.setItem('dailyburn_onboarding_slide', currentSlide.toString());
-        console.log("Onboarding Slide Updated:", currentSlide, SLIDES[currentSlide]?.id);
     }, [currentSlide]);
 
     const toggleDay = (day) => {

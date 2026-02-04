@@ -63,10 +63,9 @@ export default function LiveSession() {
         if (!day) navigate('/');
     }, [day, navigate]);
 
-    if (!day) return null;
-
     // Flatten all exercises into a single list
     const exercises = React.useMemo(() => {
+        if (!day) return [];
         return day.rawBlocks.flatMap(block =>
             block.exercises.map(ex => {
                 // FALLBACK: If timing is missing (stale plan), look it up from DB
@@ -271,6 +270,8 @@ export default function LiveSession() {
     };
 
     // RENDER: COMPLETION SCREEN
+    if (!day) return null;
+
     if (isFinished) {
         return (
             <div className="flex flex-col min-h-screen bg-indigo-950 text-white items-center justify-center p-8 text-center animate-in fade-in duration-500">

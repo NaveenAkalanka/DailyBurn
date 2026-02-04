@@ -180,7 +180,6 @@ export const DayDetailCard = ({ d }) => {
   const handleSwapClick = (blockIdx, ex) => {
     // Hydrate the exercise with full metadata from the library to ensure pattern/sub_pattern exist
     const fullEx = EXERCISE_LIBRARY.find(e => e.name === ex.name) || ex;
-    console.log("Swap Clicked:", blockIdx, fullEx);
     setSwapState({
       isOpen: true,
       day: d.day,
